@@ -1,0 +1,323 @@
+{
+  "name": "port-occupancy",
+  "displayName": "%displayName%",
+  "description": "%description%",
+  "version": "1.0.0",
+  "publisher": "xuhuibin",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#07111f",
+    "theme": "dark"
+  },
+  "categories": ["Visualization", "Other"],
+  "keywords": [
+    "port",
+    "ports",
+    "occupancy",
+    "listening",
+    "process",
+    "pid",
+    "lsof",
+    "netstat",
+    "kill",
+    "tcp",
+    "udp"
+  ],
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "extensionKind": ["workspace"],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "restrictedConfigurations": ["portOccupancy.forceKill"],
+      "description": "%capability.untrusted%"
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  },
+  "activationEvents": [
+    "onView:portOccupancy.ports",
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "l10n": "./l10n",
+  "contributes": {
+    "configuration": {
+      "title": "%config.title%",
+      "properties": {
+        "portOccupancy.showUdp": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.showUdp%"
+        },
+        "portOccupancy.showEstablished": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.showEstablished%"
+        },
+        "portOccupancy.groupBy": {
+          "type": "string",
+          "enum": ["process", "port"],
+          "enumDescriptions": ["%config.groupBy.process%", "%config.groupBy.port%"],
+          "default": "process",
+          "description": "%config.groupBy%"
+        },
+        "portOccupancy.refreshInterval": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 300,
+          "description": "%config.refreshInterval%"
+        },
+        "portOccupancy.confirmKill": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.confirmKill%"
+        },
+        "portOccupancy.forceKill": {
+          "type": "boolean",
+          "default": false,
+          "description": "%config.forceKill%"
+        },
+        "portOccupancy.ignoredProcesses": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "%config.ignoredProcesses%"
+        },
+        "portOccupancy.ignoredPorts": {
+          "type": "array",
+          "items": { "type": "number" },
+          "default": [],
+          "description": "%config.ignoredPorts%"
+        },
+        "portOccupancy.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.showStatusBar%"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "portOccupancy.refresh",
+        "title": "%command.refresh%",
+        "icon": "$(refresh)",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.focus",
+        "title": "%command.focus%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.filter",
+        "title": "%command.filter%",
+        "icon": "$(filter)",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.clearFilter",
+        "title": "%command.clearFilter%",
+        "icon": "$(clear-all)",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.groupByProcess",
+        "title": "%command.groupByProcess%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.groupByPort",
+        "title": "%command.groupByPort%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.findPort",
+        "title": "%command.findPort%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.killPort",
+        "title": "%command.killPort%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.kill",
+        "title": "%command.kill%",
+        "icon": "$(trash)",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.copyPort",
+        "title": "%command.copyPort%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.copyPid",
+        "title": "%command.copyPid%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.copyAddress",
+        "title": "%command.copyAddress%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.copyCommand",
+        "title": "%command.copyCommand%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.openInBrowser",
+        "title": "%command.openInBrowser%",
+        "category": "%command.category%"
+      },
+      {
+        "command": "portOccupancy.copyAll",
+        "title": "%command.copyAll%",
+        "category": "%command.category%"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "portOccupancy",
+          "title": "%view.container.title%",
+          "icon": "media/port-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "portOccupancy": [
+        {
+          "id": "portOccupancy.ports",
+          "name": "%view.ports.name%",
+          "icon": "media/port-icon.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "portOccupancy.ports",
+        "contents": "%view.welcome%"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "portOccupancy.refresh",
+          "when": "view == portOccupancy.ports",
+          "group": "navigation@1"
+        },
+        {
+          "command": "portOccupancy.filter",
+          "when": "view == portOccupancy.ports && !portOccupancy.hasFilter",
+          "group": "navigation@2"
+        },
+        {
+          "command": "portOccupancy.clearFilter",
+          "when": "view == portOccupancy.ports && portOccupancy.hasFilter",
+          "group": "navigation@2"
+        },
+        {
+          "command": "portOccupancy.groupByProcess",
+          "when": "view == portOccupancy.ports",
+          "group": "1_grouping@1"
+        },
+        {
+          "command": "portOccupancy.groupByPort",
+          "when": "view == portOccupancy.ports",
+          "group": "1_grouping@2"
+        },
+        {
+          "command": "portOccupancy.copyAll",
+          "when": "view == portOccupancy.ports",
+          "group": "2_copy"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "portOccupancy.kill",
+          "when": "view == portOccupancy.ports && viewItem =~ /processItem|portItem/ && isWorkspaceTrusted",
+          "group": "inline@1"
+        },
+        {
+          "command": "portOccupancy.kill",
+          "when": "view == portOccupancy.ports && viewItem =~ /processItem|portItem/ && isWorkspaceTrusted",
+          "group": "0_kill"
+        },
+        {
+          "command": "portOccupancy.copyPort",
+          "when": "view == portOccupancy.ports && viewItem =~ /portItem/",
+          "group": "1_copy@1"
+        },
+        {
+          "command": "portOccupancy.copyPid",
+          "when": "view == portOccupancy.ports && viewItem =~ /processItem|portItem/",
+          "group": "1_copy@2"
+        },
+        {
+          "command": "portOccupancy.copyAddress",
+          "when": "view == portOccupancy.ports && viewItem =~ /portItem/",
+          "group": "1_copy@3"
+        },
+        {
+          "command": "portOccupancy.copyCommand",
+          "when": "view == portOccupancy.ports && viewItem =~ /processItem|portItem/",
+          "group": "1_copy@4"
+        },
+        {
+          "command": "portOccupancy.openInBrowser",
+          "when": "view == portOccupancy.ports && viewItem == portItem.listen",
+          "group": "2_open"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "portOccupancy.kill",
+          "when": "false"
+        },
+        {
+          "command": "portOccupancy.copyPort",
+          "when": "false"
+        },
+        {
+          "command": "portOccupancy.copyPid",
+          "when": "false"
+        },
+        {
+          "command": "portOccupancy.copyAddress",
+          "when": "false"
+        },
+        {
+          "command": "portOccupancy.copyCommand",
+          "when": "false"
+        },
+        {
+          "command": "portOccupancy.openInBrowser",
+          "when": "false"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "compile": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "watch": "npm run compile -- --watch",
+    "check": "tsc --noEmit",
+    "package": "vsce package --no-dependencies --allow-missing-repository",
+    "selftest": "tsx src/parse.selftest.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "@types/vscode": "^1.74.0",
+    "@vscode/vsce": "^3.2.2",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

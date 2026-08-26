@@ -1,0 +1,16 @@
+.vscode/**
+.vscode-test/**
+src/**
+scripts/**
+node_modules/**
+.gitignore
+.gitattributes
+tsconfig.json
+**/*.map
+**/*.ts
+dist/**
+!dist/extension.js
+.DS_Store
+*.vsix
+PUBLISH.md
+src/parse.selftest.ts
