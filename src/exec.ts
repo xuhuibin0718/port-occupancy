@@ -16,10 +16,16 @@ export class CommandError extends Error {
 export function runCommand(
   command: string,
   args: string[],
-  options: { timeout?: number; maxBuffer?: number; posixLocale?: boolean } = {},
+  options: {
+    timeout?: number;
+    maxBuffer?: number;
+    posixLocale?: boolean;
+    acceptExitCodes?: number[];
+  } = {},
 ): Promise<string> {
   const timeout = options.timeout ?? 20_000;
   const maxBuffer = options.maxBuffer ?? 12 * 1024 * 1024;
+  const acceptExitCodes = options.acceptExitCodes ?? [0, 1];
 
   return new Promise((resolve, reject) => {
     execFile(
@@ -48,7 +54,7 @@ export function runCommand(
         const exitCode = typeof execError.code === 'number' ? execError.code : null;
 
         // lsof / ss / netstat often exit 1 when there are no matching sockets.
-        if (exitCode === 1) {
+        if (exitCode !== null && acceptExitCodes.includes(exitCode)) {
           resolve(out);
           return;
         }

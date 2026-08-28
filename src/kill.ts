@@ -1,3 +1,4 @@
+import { execFile } from 'child_process';
 import { runCommand } from './exec';
 
 const PROTECTED_PIDS = new Set([0, 1, 2, 4]);
@@ -33,9 +34,50 @@ export async function killProcess(pid: number, force: boolean): Promise<void> {
     if (force) {
       args.push('/F');
     }
-    await runCommand('taskkill', args);
+    try {
+      await runCommand('taskkill', args, { acceptExitCodes: [0] });
+    } catch (error) {
+      if (await isProcessAlive(pid)) {
+        throw error;
+      }
+    }
     return;
   }
 
-  await runCommand('kill', [force ? '-9' : '-TERM', String(pid)]);
+  try {
+    await runCommand('kill', [force ? '-9' : '-TERM', String(pid)], { acceptExitCodes: [0] });
+  } catch (error) {
+    if (await isProcessAlive(pid)) {
+      throw error;
+    }
+  }
+}
+
+export function isProcessAlive(pid: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (process.platform === 'win32') {
+      execFile('tasklist', ['/FI', `PID eq ${pid}`, '/NH'], { windowsHide: true }, (_error, stdout) => {
+        resolve((stdout ?? '').includes(String(pid)));
+      });
+      return;
+    }
+    execFile('kill', ['-0', String(pid)], (error) => {
+      resolve(!error);
+    });
+  });
+}
+
+export async function waitForProcessExit(pid: number, timeoutMs: number): Promise<boolean> {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if (!(await isProcessAlive(pid))) {
+      return true;
+    }
+    await delay(120);
+  }
+  return !(await isProcessAlive(pid));
+}
+
+export function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

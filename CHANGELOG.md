@@ -1,3 +1,5 @@
+**English** | [简体中文](./CHANGELOG.zh-CN.md)
+
 # Change Log
 
 ## 1.0.0

@@ -12,5 +12,4 @@ dist/**
 !dist/extension.js
 .DS_Store
 *.vsix
-PUBLISH.md
 src/parse.selftest.ts

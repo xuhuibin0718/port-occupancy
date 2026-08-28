@@ -3,14 +3,17 @@
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "1.0.0",
-  "publisher": "xuhuibin",
+  "publisher": "PortOccupancy",
   "license": "MIT",
   "icon": "media/icon.png",
   "galleryBanner": {
     "color": "#07111f",
     "theme": "dark"
   },
-  "categories": ["Visualization", "Other"],
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
   "keywords": [
     "port",
     "ports",
@@ -27,11 +30,15 @@
   "engines": {
     "vscode": "^1.74.0"
   },
-  "extensionKind": ["workspace"],
+  "extensionKind": [
+    "workspace"
+  ],
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
-      "restrictedConfigurations": ["portOccupancy.forceKill"],
+      "restrictedConfigurations": [
+        "portOccupancy.forceKill"
+      ],
       "description": "%capability.untrusted%"
     },
     "virtualWorkspaces": {
@@ -60,8 +67,14 @@
         },
         "portOccupancy.groupBy": {
           "type": "string",
-          "enum": ["process", "port"],
-          "enumDescriptions": ["%config.groupBy.process%", "%config.groupBy.port%"],
+          "enum": [
+            "process",
+            "port"
+          ],
+          "enumDescriptions": [
+            "%config.groupBy.process%",
+            "%config.groupBy.port%"
+          ],
           "default": "process",
           "description": "%config.groupBy%"
         },
@@ -84,13 +97,17 @@
         },
         "portOccupancy.ignoredProcesses": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "description": "%config.ignoredProcesses%"
         },
         "portOccupancy.ignoredPorts": {
           "type": "array",
-          "items": { "type": "number" },
+          "items": {
+            "type": "number"
+          },
           "default": [],
           "description": "%config.ignoredPorts%"
         },
@@ -319,5 +336,6 @@
     "esbuild": "^0.25.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
