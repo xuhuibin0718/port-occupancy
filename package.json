@@ -5,6 +5,10 @@
   "version": "1.0.0",
   "publisher": "PortOccupancy",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xuhuibin0718/port-occupancy.git"
+  },
   "icon": "media/icon.png",
   "galleryBanner": {
     "color": "#07111f",
@@ -326,7 +330,7 @@
     "compile": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
     "watch": "npm run compile -- --watch",
     "check": "tsc --noEmit",
-    "package": "vsce package --no-dependencies --allow-missing-repository",
+    "package": "vsce package --no-dependencies",
     "selftest": "tsx src/parse.selftest.ts"
   },
   "devDependencies": {
